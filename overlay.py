@@ -40,19 +40,6 @@ class ScreenDrawer:
     def clear(self):
         self.canvas.delete("all")
 
-    def on_canvas_click(self, event):
-            # Check if the click occurred within the region occupied by the drawn elements
-        x, y = event.x, event.y
-        if self.canvas.find_overlapping(x, y, x, y):
-                # release if clicked on overlay so it doesnt hang
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-                # Simulate a click at the calculated position to get focus back
-            win32api.SetCursorPos((x - 50, y - 2000))
-            time.sleep(0.08)
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-            time.sleep(random.uniform(0.01, 0.03))
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-        return "break"
 
     def draw_circle(self, x, y, r=15, color="red"):
         return self.canvas.create_oval(x - r, y - r, x + r, y + r, outline=color, width=2)
