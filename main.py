@@ -35,34 +35,40 @@ def main():
     list_entity_mapped=[]
     dibujar = overlay.ScreenDrawer()
     while True:
-        dibujar.clear()
         if keyboard.is_pressed(Clear_mapped_entitys):
             win32api.Beep(10, 10)
             list_entity_mapped.clear()
             dibujar.root.update()
             print("entitys unmapped")
             time.sleep(0.5)
+            continue
 
         if keyboard.is_pressed(Check_team_key):
             win32api.Beep(100, 10)
             check_team = not check_team
             print(f"check team is: {check_team}")
             time.sleep(0.5)
+            continue
 
         if keyboard.is_pressed(Hide_key):
             win32api.Beep(100, 10)
             hide = not hide
             print(f"hide is: {hide}")
-            if not hide:
+            if hide:
+                dibujar.clear()
                 dibujar.root.update()
             time.sleep(0.5)
+            continue
 
         if keyboard.is_pressed(Exit):
             win32api.Beep(500, 10)
             print("exit")
             exit()
+            
         if hide:
-            continue    
+            time.sleep(0.1)
+            continue
+        dibujar.clear()
         try:
             player = pm.read_longlong(client + dwLocalPlayerPawn)
             playerTeam = pm.read_int(player + m_iTeamNum)

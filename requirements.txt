@@ -2,3 +2,5 @@ pymem
 struck
 time
 colorama
+tkinter
+random

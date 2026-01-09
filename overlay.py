@@ -1,42 +1,38 @@
 import tkinter as tk
 import win32api,win32con,time,random
 from win32api import GetSystemMetrics
+import ctypes
+
 class ScreenDrawer:
     def __init__(self):
         self.root = tk.Tk()
+        self.transparent_color = "white"
 
-        self.width = self.root.winfo_screenwidth()
-        self.height = self.root.winfo_screenheight()
-
-        self.root.overrideredirect(True)
+        self.root.attributes('-fullscreen', True)
         self.root.attributes("-topmost", True)
-        self.root.geometry(f"{self.width}x{self.height}+0+0")
-
-        self.transparent_color = "magenta"
-        self.root.configure(bg=self.transparent_color)
-        self.root.attributes("-transparentcolor", self.transparent_color)
-        self.root.bind("<Button-1>", self.on_canvas_click)
+        self.root.overrideredirect(True)
+        self.root.config(cursor="none")
+        self.root.wm_attributes("-transparentcolor", self.transparent_color)
+        
+        #self.root.configure(bg=self.transparent_color)
+       
+        
         self.canvas = tk.Canvas(
             self.root,
             bg=self.transparent_color,
             highlightthickness=0,takefocus=False
         )
-        self.canvas.pack(fill="both", expand=True)
+
+        self.canvas.pack(fill="both", expand=True )#
+        self.root.update_idletasks()
+        hwnd = ctypes.windll.user32.FindWindowW(None, self.root.title())
+        self.make_window_clickthrough(hwnd)
     
 
-    def on_canvas_click(self, event):
-            # Check if the click occurred within the region occupied by the drawn elements
-            x, y = event.x, event.y
-            if self.canvas.find_overlapping(x, y, x, y):
-                # release if clicked on overlay so it doesnt hang
-                win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-                # Simulate a click at the calculated position to get focus back
-                win32api.SetCursorPos((x - 50, y - 2000))
-                time.sleep(0.08)
-                win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-                time.sleep(random.uniform(0.01, 0.03))
-                win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-            return "break"
+    def make_window_clickthrough(self, hwnd):
+        ctypes.windll.user32.ShowCursor(False)
+        extended_style = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
+        ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
     def clear(self):
         self.canvas.delete("all")
 
